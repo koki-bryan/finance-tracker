@@ -2,7 +2,10 @@ import express, { json } from "express";
 import pkg from "pg";
 import cors from "cors";
 import bcrypt from "bcrypt";
+import dotenv from "dotenv";
+import jwt from "jsonwebtoken";
 
+dotenv.config();
 const port = 5000;
 const app = express();
 app.use(express.json());
@@ -48,6 +51,7 @@ router.post("/signup", async (req, res) => {
 
   res.json(result.rows[0]);
 });
+
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
@@ -70,8 +74,12 @@ router.post("/login", async (req, res) => {
     return res.status(401).json({ error: "Invalid credentials" });
   }
 
+  const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
+    expiresIn: "1h",
+  });
+
   res.json({
     message: "Login successful",
-    userId: user.id,
+    token: token,
   });
 });

@@ -1,5 +1,6 @@
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import type { Route } from "./+types/LogIn";
+import { useState } from "react";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -9,7 +10,34 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function LogIn() {
-  const handleSubmit = async () => {};
+  const navigate = useNavigate();
+  const [formEmail, setFormEmail] = useState("");
+  const [formPassword, setFormPassword] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const email = formEmail;
+    const password = formPassword;
+
+    const res = await fetch("http://localhost:5000/api/v1/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      console.error(data.error);
+      return;
+    }
+
+    localStorage.setItem("token", data.token);
+    console.log("Log in Successful");
+    navigate("/app");
+  };
+
   return (
     <section className="h-screen bg-linear-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
       <div className="bg-white w-full max-w-md p-6 flex flex-col items-center justify-center rounded-lg gap-4 shadow-lg">
@@ -22,11 +50,25 @@ export default function LogIn() {
         <form onSubmit={handleSubmit} className="flex flex-col w-full">
           <div className="form-control">
             <label htmlFor="email">Email:</label>
-            <input type="email" name="email" id="email" required />
+            <input
+              type="email"
+              name="email"
+              id="email"
+              required
+              onChange={(e) => setFormEmail(e.target.value)}
+              value={formEmail}
+            />
           </div>
           <div className="form-control">
             <label htmlFor="password">Password:</label>
-            <input type="password" name="password" id="password" required />
+            <input
+              type="password"
+              name="password"
+              id="password"
+              required
+              value={formPassword}
+              onChange={(e) => setFormPassword(e.target.value)}
+            />
           </div>
 
           <div className="form-control">
