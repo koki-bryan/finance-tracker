@@ -106,7 +106,7 @@ export default function SignUp() {
             <p className="text-xs text-center mt-1 text-gray-500">
               Already have an account?{" "}
               <span className="text-indigo-500 cursor-pointer">
-                <Link to={"/log-in"}>Log In</Link>
+                <Link to={"/login"}>Log In</Link>
               </span>
             </p>
           </div>

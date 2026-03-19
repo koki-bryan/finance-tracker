@@ -14,10 +14,10 @@ type Pages = {
   "/": {
     params: {};
   };
-  "/log-in": {
+  "/login": {
     params: {};
   };
-  "/sign-up": {
+  "/signup": {
     params: {};
   };
   "/app": {
@@ -28,7 +28,7 @@ type Pages = {
 type RouteFiles = {
   "root.tsx": {
     id: "root";
-    page: "/" | "/log-in" | "/sign-up" | "/app";
+    page: "/" | "/login" | "/signup" | "/app";
   };
   "routes/Landing.tsx": {
     id: "routes/Landing";
@@ -36,11 +36,11 @@ type RouteFiles = {
   };
   "routes/LogIn.tsx": {
     id: "routes/LogIn";
-    page: "/log-in";
+    page: "/login";
   };
   "routes/SignUp.tsx": {
     id: "routes/SignUp";
-    page: "/sign-up";
+    page: "/signup";
   };
   "layouts/ProtectedLayout.tsx": {
     id: "layouts/ProtectedLayout";

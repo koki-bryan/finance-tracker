@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router";
+import Features from "~/components/Features";
 import LandingSection from "~/components/LandingSection";
 import Nav from "~/components/Nav";
 
@@ -8,6 +9,7 @@ const Landing = () => {
     <>
       <Nav />
       <LandingSection />
+      <Features />
     </>
   );
 };

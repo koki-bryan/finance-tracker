@@ -81,7 +81,7 @@ export default function LogIn() {
             <p className="text-xs text-center mt-1 text-gray-500">
               Don't have an account?{" "}
               <span className="text-indigo-500 cursor-pointer">
-                <Link to={"/sign-up"}>Sign Up</Link>
+                <Link to={"/signup"}>Sign Up</Link>
               </span>
             </p>
           </div>
