@@ -1,17 +1,14 @@
 import React from "react";
 import { Link } from "react-router";
+import LandingSection from "~/components/LandingSection";
+import Nav from "~/components/Nav";
 
 const Landing = () => {
   return (
-    <div>
-      Landing Page
-      <button>
-        <Link to={"/sign-up"}>Sign Up</Link>
-      </button>
-      <button>
-        <Link to={"/log-in"}>Log In</Link>
-      </button>
-    </div>
+    <>
+      <Nav />
+      <LandingSection />
+    </>
   );
 };
 
