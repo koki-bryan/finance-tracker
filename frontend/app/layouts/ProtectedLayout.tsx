@@ -13,7 +13,7 @@ const ProtectedLayout = () => {
 
   if (!checkedAuth) return null;
   if (!token) {
-    return <Navigate to={"/log-in"} replace />;
+    return <Navigate to={"/login"} replace />;
   }
 
   return <Outlet />;
