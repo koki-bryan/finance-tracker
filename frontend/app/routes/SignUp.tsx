@@ -34,7 +34,7 @@ export default function SignUp() {
 
     if (res.ok) {
       console.log("sign up successful");
-      navigate("/log-in");
+      navigate("/login");
     } else {
       console.error(data.error);
     }

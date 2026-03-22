@@ -35,7 +35,7 @@ export default function LogIn() {
 
     localStorage.setItem("token", data.token);
     console.log("Log in Successful");
-    navigate("/app");
+    navigate("/app/dashboard");
   };
 
   return (

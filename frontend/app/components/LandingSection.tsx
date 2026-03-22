@@ -8,10 +8,10 @@ const LandingSection = () => {
     <section className="bg-linear-to-tr from-blue-50/80 to-indigo-100/50 pb-8 shadow-md mb-0.5">
       <div className="max-w-6xl mx-auto p-6 pt-16 grid-cols-1 grid items-center gap-6 lg:gap-8 xl:gap-10 lg:grid-cols-2">
         <div className="flex flex-col gap-4 ">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-semibold tracking-wide bg-linear-to-br from-indigo-600 via-blue-500 to-purple-600 text-transparent bg-clip-text">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-semibold font-montserrat tracking-wide bg-linear-to-br from-indigo-600 via-blue-500 to-purple-600 text-transparent bg-clip-text">
             Take Control of Your Financial Future
           </h1>
-          <p className="text-sm md:text-base lg:text-lg text-gray-600 tracking-wide leading-relaxed max-w-md lg:max-w-lg xl:max-w-xl">
+          <p className="text-sm md:text-base font-poppins lg:text-lg text-gray-600 tracking-wide leading-relaxed max-w-md lg:max-w-lg xl:max-w-xl">
             Track every dollar, understand your spending habits, and make
             smarter financial decisions with our intuitive personal finance
             tracker.
