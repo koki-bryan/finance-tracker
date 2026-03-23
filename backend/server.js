@@ -4,6 +4,7 @@ import cors from "cors";
 import bcrypt from "bcrypt";
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
+import { authMiddleWare } from "./middleware/auth.js";
 
 dotenv.config();
 const port = 5000;
@@ -28,7 +29,7 @@ app.get("/", (req, res) => {
   res.send("hello world");
 });
 
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// - - - - - - - - - - - - - - - - SIGNUP- - - - - - - - - - - - - - - - - - -
 
 const router = express.Router();
 app.use("/api/v1", router);
@@ -52,6 +53,7 @@ router.post("/signup", async (req, res) => {
   res.json(result.rows[0]);
 });
 
+// --------------------------------LOGIN-------------------------------------------
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
@@ -82,4 +84,8 @@ router.post("/login", async (req, res) => {
     message: "Login successful",
     token: token,
   });
+});
+
+router.get("/me", authMiddleWare, (req, res) => {
+  res.json({ userId: req.user.userId });
 });
