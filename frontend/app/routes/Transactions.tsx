@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import type { Route } from "./+types/Transactions";
 import { Plus, Filter } from "lucide-react";
+import TransactionModal from "~/components/TransactionModal";
+
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "Transactions | Fi-Track" },
@@ -18,8 +20,8 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 const Transactions = () => {
-  const [type, setType] = useState("");
-  const [modal, setModal] = useState(false);
+  const [type, setType] = useState<"all" | "expense" | "income">("all");
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
     <section className="min-h-screen bg-gray-50 py-8">
@@ -29,7 +31,10 @@ const Transactions = () => {
         <div className="flex justify-between items-center">
           <h1 className="font-semibold text-xl">Transactions</h1>
 
-          <button className="flex items-center font-semibold text-xs gap-2 bg-indigo-600 text-white px-2 md:px-4 py-2 rounded-md cursor-pointer">
+          <button
+            className="flex items-center font-semibold text-xs gap-2 bg-indigo-600 text-white px-2 md:px-4 py-2 rounded-md cursor-pointer"
+            onClick={() => setIsModalOpen(true)}
+          >
             <Plus className="w-4 h-4" />
             Add Transaction
           </button>
@@ -50,7 +55,10 @@ const Transactions = () => {
                   Type
                 </h2>
                 <select
-                  value={""}
+                  value={type}
+                  onChange={(e) =>
+                    setType(e.target.value as "all" | "income" | "expense")
+                  }
                   className="border p-2 rounded-lg border-gray-300 text-sm px-4 font-poppins"
                 >
                   <option value="all">All Types</option>
@@ -80,6 +88,10 @@ const Transactions = () => {
           {/* future table/list */}
         </div>
       </div>
+
+      {isModalOpen && (
+        <TransactionModal onClose={() => setIsModalOpen(false)} />
+      )}
     </section>
   );
 };
