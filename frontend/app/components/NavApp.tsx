@@ -11,7 +11,7 @@ const NavApp = () => {
   };
   return (
     <nav className="flex flex-col p-4 md:py-8 shadow-md mb-0.5 ">
-      <div className="max-w-4xl mx-auto w-full">
+      <div className="max-w-6xl mx-auto w-full">
         <div className="flex justify-between gap-0.5 items-center ">
           <div className="flex items-center gap-1">
             <img src={Logo} alt="" className="size-12" />
@@ -28,11 +28,11 @@ const NavApp = () => {
           </button>
         </div>
 
-        <div className="mt-4 flex gap-4">
+        <div className="mt-4 flex gap-6">
           <NavLink
             to="/app/dashboard"
             className={({ isActive }) =>
-              `pb-2 text-sm md:text-base font-medium border-b-2 -mb-px transition-all duration-300 ease-in-out flex gap-1 items-center ${
+              `px-4 pb-2 text-sm md:text-base font-medium border-b-2 -mb-px transition-all duration-300 ease-in-out flex gap-1 items-center ${
                 isActive
                   ? "text-indigo-600 border-indigo-600"
                   : "text-gray-500 border-transparent hover:text-indigo-600 hover:border-indigo-300"
@@ -45,7 +45,7 @@ const NavApp = () => {
           <NavLink
             to="/app/transactions"
             className={({ isActive }) =>
-              `pb-2 text-sm md:text-base font-medium border-b-2 -mb-px transition-all duration-300 ease-in-out flex gap-1 items-center ${
+              `px-4 pb-2 text-sm md:text-base font-medium border-b-2 -mb-px transition-all duration-300 ease-in-out flex gap-1 items-center ${
                 isActive
                   ? "text-indigo-600 border-indigo-600"
                   : "text-gray-500 border-transparent hover:text-indigo-600 hover:border-indigo-300"

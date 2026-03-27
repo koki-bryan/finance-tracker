@@ -18,7 +18,7 @@ export function meta({}: Route.MetaArgs) {
       property: "og:description",
       content: "Take control of your money today.",
     },
-    // You can also add custom attributes
+
     { name: "keywords", content: "finance, tracker, budget, money, graph" },
   ];
 }
