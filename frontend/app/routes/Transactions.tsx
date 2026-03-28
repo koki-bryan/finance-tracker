@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import type { Route } from "./+types/Transactions";
 import { Plus, Filter } from "lucide-react";
 import TransactionModal from "~/components/TransactionModal";
+import { CATEGORIES } from "~/contexts/TransactionContext";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -22,7 +23,12 @@ export function meta({}: Route.MetaArgs) {
 const Transactions = () => {
   const [type, setType] = useState<"all" | "expense" | "income">("all");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [category, setCategory] = useState("");
 
+  const filteredCategories =
+    type === "all"
+      ? CATEGORIES
+      : CATEGORIES.filter((category) => category.type === type);
   return (
     <section className="min-h-screen bg-gray-50 py-8">
       {/* Container */}
@@ -56,9 +62,10 @@ const Transactions = () => {
                 </h2>
                 <select
                   value={type}
-                  onChange={(e) =>
-                    setType(e.target.value as "all" | "income" | "expense")
-                  }
+                  onChange={(e) => {
+                    setType(e.target.value as "all" | "income" | "expense");
+                    setCategory("");
+                  }}
                   className="border p-2 rounded-lg border-gray-300 text-sm px-4 font-poppins"
                 >
                   <option value="all">All Types</option>
@@ -73,10 +80,18 @@ const Transactions = () => {
                   Categories
                 </h2>
                 <select
-                  value={""}
+                  value={category}
+                  onChange={(e) => {
+                    setCategory(e.target.value);
+                  }}
                   className="border p-2 rounded-lg border-gray-300 text-sm px-4 font-poppins"
                 >
-                  <option>All categories</option>
+                  <option value="">All categories</option>
+                  {filteredCategories.map((cat) => (
+                    <option key={cat.id} value={cat.id}>
+                      {cat.name}
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>
