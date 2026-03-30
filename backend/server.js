@@ -5,6 +5,7 @@ import bcrypt from "bcrypt";
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
 import { authMiddleWare } from "./middleware/auth.js";
+import dashboardRoutes from "./dashboard/dashboard.js";
 
 dotenv.config();
 const port = 5000;
@@ -14,7 +15,7 @@ app.use(cors());
 
 const { Pool } = pkg;
 
-const pool = new Pool({
+export const pool = new Pool({
   user: "postgres",
   host: "localhost",
   database: "finance_tracker",
@@ -89,3 +90,5 @@ router.post("/login", async (req, res) => {
 router.get("/me", authMiddleWare, (req, res) => {
   res.json({ userId: req.user.userId });
 });
+
+app.use("/api/v1", dashboardRoutes);

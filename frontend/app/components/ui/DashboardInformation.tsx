@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { type LucideIcon } from "lucide-react";
+import { formatCurrency } from "~/utils/format/format";
 
 export interface DashboardInformationProps {
   label: string;
@@ -22,7 +23,7 @@ const DashboardInformation = ({
       <div className="flex flex-col gap-2">
         <p className="text-xs md:text-sm text-gray-500">{label}</p>
         <h1 className={`${labelValueColor} text-lg md:text-xl`}>
-          $ {labelValue}.00
+          {formatCurrency(labelValue)}
         </h1>
       </div>
 

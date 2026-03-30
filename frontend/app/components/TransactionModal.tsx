@@ -26,14 +26,19 @@ const TransactionModal = ({ onClose }: TransactionModalProps) => {
     setType(selectedType);
     setCategory("");
   };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+  };
   return (
     <div
       className="fixed inset-0 bg-black/20 flex items-center justify-center z-50 p-4"
       onClick={onClose}
     >
-      <div
+      <form
         className="bg-white max-w-md w-full rounded-lg"
         onClick={(e) => e.stopPropagation()}
+        onSubmit={handleSubmit}
       >
         <div className="flex p-4 flex-col gap-4">
           <div className="flex items-center justify-between w-full">
@@ -41,7 +46,7 @@ const TransactionModal = ({ onClose }: TransactionModalProps) => {
             <h1 className="font-poppins text-lg font-semibold">
               Add Transaction
             </h1>
-            <button onClick={onClose} className="cursor-pointer">
+            <button onClick={onClose} type="button" className="cursor-pointer">
               <X />
             </button>
           </div>
@@ -53,12 +58,14 @@ const TransactionModal = ({ onClose }: TransactionModalProps) => {
             <div className="flex gap-2 w-full">
               <button
                 onClick={() => handleType("expense")}
+                type="button"
                 className={`flex-1 py-2 rounded-md border text-sm font-semibold mt-2 transition-colors ease-in-out duration-300 cursor-pointer ${modalTransactionType === "expense" ? EXPENSE_STYLE : DEFAULT_STYLE}`}
               >
                 Expense
               </button>
               <button
                 onClick={() => handleType("income")}
+                type="button"
                 className={`flex-1 py-2 rounded-md border text-sm font-semibold mt-2 transition-colors ease-in-out duration-300 cursor-pointer ${modalTransactionType === "income" ? INCOME_STYLE : DEFAULT_STYLE}`}
               >
                 Income
@@ -126,18 +133,20 @@ const TransactionModal = ({ onClose }: TransactionModalProps) => {
           <div className="flex gap-2 w-full">
             <button
               onClick={onClose}
+              type="button"
               className={`flex-1 py-2 rounded-md text-sm font-semibold mt-2 ${DEFAULT_STYLE} border border-gray-200! cursor-pointer`}
             >
               Cancel
             </button>
             <button
+              type="submit"
               className={`flex-1 py-2 rounded-md border text-sm font-semibold mt-2 transition-colors ease-in-out duration-300 bg-indigo-600 text-white cursor-pointer`}
             >
               Add
             </button>
           </div>
         </div>
-      </div>
+      </form>
     </div>
   );
 };
