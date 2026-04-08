@@ -1,6 +1,4 @@
 import express from "express";
-import pkg from "pg";
-import cors from "cors";
 import dotenv from "dotenv";
 import { authMiddleWare } from "../middleware/auth.js";
 import { pool } from "../server.js";

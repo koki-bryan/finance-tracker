@@ -6,6 +6,7 @@ import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
 import { authMiddleWare } from "./middleware/auth.js";
 import dashboardRoutes from "./dashboard/dashboard.js";
+import transactionRoutes from "./transaction/transaction.js";
 
 dotenv.config();
 const port = 5000;
@@ -92,3 +93,4 @@ router.get("/me", authMiddleWare, (req, res) => {
 });
 
 app.use("/api/v1", dashboardRoutes);
+app.use("/api/v1", transactionRoutes);

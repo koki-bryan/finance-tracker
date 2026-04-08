@@ -1,6 +1,7 @@
 import { X } from "lucide-react";
 import { useState } from "react";
 import { CATEGORIES } from "~/contexts/TransactionContext";
+import { apiFetch } from "~/utils/api/apiFetch";
 
 interface TransactionModalProps {
   onClose: () => void;
@@ -14,9 +15,13 @@ const MODAL_LABEL_STYLE = "font-poppins text-gray-500";
 const TransactionModal = ({ onClose }: TransactionModalProps) => {
   const [modalTransactionType, setModalTransactionType] = useState<
     "income" | "expense" | null
-  >("expense");
+  >("expense"); // FOR STYLES ONLY
+
   const [type, setType] = useState("all");
   const [category, setCategory] = useState("");
+  const [amount, setAmount] = useState("");
+  const [description, setDescription] = useState("");
+  const [date, setDate] = useState("");
 
   const filteredCategories =
     type === "all" ? CATEGORIES : CATEGORIES.filter((c) => c.type === type);
@@ -27,8 +32,46 @@ const TransactionModal = ({ onClose }: TransactionModalProps) => {
     setCategory("");
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    const cat = Number(category);
+    const amt = Number(amount);
+    if (
+      !category ||
+      Number.isNaN(cat) ||
+      Number.isNaN(amt) ||
+      !description.trim() ||
+      !date
+    ) {
+      console.log("Missing or invalid fields");
+      return;
+    }
+    const modifiedDate = new Date(date).toISOString().split("T")[0];
+
+    try {
+      const res = await apiFetch("http://localhost:5000/api/v1/transaction", {
+        method: "POST",
+        body: JSON.stringify({
+          category: cat,
+          amount: amt,
+          description,
+          date: modifiedDate,
+        }),
+      });
+
+      if (!res) return;
+
+      const data = await res.json();
+      if (!res.ok) {
+        console.error(data.error);
+        return;
+      }
+
+      onClose();
+    } catch (err) {
+      console.error(err);
+    }
   };
   return (
     <div
@@ -50,6 +93,7 @@ const TransactionModal = ({ onClose }: TransactionModalProps) => {
               <X />
             </button>
           </div>
+
           <hr className="border border-gray-300 w-full mt-2" />
 
           {/* Type Div */}
@@ -83,6 +127,8 @@ const TransactionModal = ({ onClose }: TransactionModalProps) => {
               name="amount"
               id="amount"
               className="border p-2 border-gray-400 rounded-lg mt-2"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
             />
           </div>
 
@@ -97,6 +143,7 @@ const TransactionModal = ({ onClose }: TransactionModalProps) => {
             >
               <option value="">Select a category</option>
               {filteredCategories.map((category) => (
+                // VALUE IS CATEGORY ID, NOT THE WORD
                 <option value={category.id} key={category.id}>
                   {category.name}
                 </option>
@@ -114,6 +161,8 @@ const TransactionModal = ({ onClose }: TransactionModalProps) => {
               name="description"
               id="description"
               className="border p-2 border-gray-400 rounded-lg mt-2"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
             />
           </div>
 
@@ -127,9 +176,12 @@ const TransactionModal = ({ onClose }: TransactionModalProps) => {
               name="date"
               id="date"
               className="border p-2 border-gray-400 rounded-lg mt-2"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
             />
           </div>
 
+          {/* Submit Cancel Buttons */}
           <div className="flex gap-2 w-full">
             <button
               onClick={onClose}

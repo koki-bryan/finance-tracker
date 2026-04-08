@@ -13,7 +13,7 @@ export const apiFetch = async (url: string, options: RequestInit = {}) => {
   if (res.status === 401 || res.status === 403) {
     localStorage.removeItem("token");
     window.location.href = "/login";
-    return;
+    throw new Error("Unauthorized");
   }
 
   return res;
