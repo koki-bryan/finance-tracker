@@ -1,3 +1,6 @@
+import { useState, createContext, useEffect, useContext } from "react";
+import { getTransactions } from "~/services/transactionService";
+
 type Category = {
   id: number;
   name: string;
@@ -25,3 +28,58 @@ export const CATEGORIES: Category[] = [
   { id: 15, name: "Education", type: "expense" },
   { id: 16, name: "Other", type: "expense" },
 ];
+
+export type Transaction = {
+  id: number;
+  amount: string; // Database returns "8500.00"
+  category_id: number;
+  description: string;
+  date: string;
+  created_at: string;
+  user_id: number;
+};
+
+interface TransactionContextType {
+  transactions: Transaction[];
+  loading: boolean;
+  fetchTransactions: () => Promise<void>
+}
+
+const TransactionContext = createContext<TransactionContextType | undefined>(
+  undefined,
+);
+
+export const TransactionProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchTransactions = async () => {
+    setLoading(true);
+
+    try {
+      const response = await getTransactions();
+      const data = await response.json();
+      setTransactions(data);
+    } catch (err) {
+      console.error("Error fetching: ", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchTransactions();
+  }, []);
+
+  return (
+    <TransactionContext.Provider value={{ transactions, loading, fetchTransactions }}>
+      {children}
+    </TransactionContext.Provider>
+  );
+};
+
+export const useTransactions = () => useContext(TransactionContext);

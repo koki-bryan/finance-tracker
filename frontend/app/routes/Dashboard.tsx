@@ -60,8 +60,6 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchSummary = async () => {
       try {
-        // 1. Corrected URL to match backend
-        // 2. Removed redundant headers (wrapper handles it)
         const response = await apiFetch(
           "http://localhost:5000/api/v1/dashboard",
         );

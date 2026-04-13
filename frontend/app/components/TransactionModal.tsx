@@ -1,7 +1,10 @@
 import { X } from "lucide-react";
 import { useState } from "react";
-import { CATEGORIES } from "~/contexts/TransactionContext";
-import { apiFetch } from "~/utils/api/apiFetch";
+import { CATEGORIES, useTransactions } from "~/contexts/TransactionContext";
+import {
+  createTransaction,
+  getTransactions,
+} from "~/services/transactionService";
 
 interface TransactionModalProps {
   onClose: () => void;
@@ -17,6 +20,7 @@ const TransactionModal = ({ onClose }: TransactionModalProps) => {
     "income" | "expense" | null
   >("expense"); // FOR STYLES ONLY
 
+  const { fetchTransactions } = useTransactions();
   const [type, setType] = useState("all");
   const [category, setCategory] = useState("");
   const [amount, setAmount] = useState("");
@@ -50,17 +54,17 @@ const TransactionModal = ({ onClose }: TransactionModalProps) => {
     const modifiedDate = new Date(date).toISOString().split("T")[0];
 
     try {
-      const res = await apiFetch("http://localhost:5000/api/v1/transaction", {
-        method: "POST",
-        body: JSON.stringify({
-          category: cat,
-          amount: amt,
-          description,
-          date: modifiedDate,
-        }),
-      });
+      const payload = {
+        category: cat,
+        amount: amt,
+        description,
+        date: modifiedDate,
+      };
+
+      const res = await createTransaction(payload);
 
       if (!res) return;
+      await fetchTransactions();
 
       const data = await res.json();
       if (!res.ok) {

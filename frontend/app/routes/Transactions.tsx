@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import type { Route } from "./+types/Transactions";
-import { Plus, Filter } from "lucide-react";
+import { Plus, Filter, type LucideIcon } from "lucide-react";
 import TransactionModal from "~/components/TransactionModal";
-import { CATEGORIES } from "~/contexts/TransactionContext";
+import { CATEGORIES, useTransactions } from "~/contexts/TransactionContext";
+import TableRow from "~/components/ui/TableRow";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -21,6 +22,7 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 const Transactions = () => {
+  const { transactions } = useTransactions();
   const [type, setType] = useState<"all" | "expense" | "income">("all");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [category, setCategory] = useState("");
@@ -99,8 +101,32 @@ const Transactions = () => {
         </div>
 
         {/* Transactions List Card */}
-        <div className="bg-white shadow-md rounded-md p-6">
-          {/* future table/list */}
+        <div className="bg-white rounded-lg shadow overflow-hidden">
+          <div className="overflow-x-auto">
+            {transactions.length > 0 ? (
+              <table className="w-full">
+                <thead className="bg-gray-50 border-b border-gray-200">
+                  <tr className="">
+                    <th className="text-gray-500">DATE</th>
+                    <th className="text-gray-500">DESCRIPTION</th>
+                    <th className="text-gray-500">CATEGORY</th>
+                    <th className="text-gray-500">TYPE</th>
+                    <th className="text-gray-500">AMOUNT</th>
+                    <th className="text-gray-500">ACTIONS</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {transactions.map((t) => (
+                    <TableRow key={t.id} transaction={t} />
+                  ))}
+                </tbody>
+              </table>
+            ) : (
+              <h1 className="p-6 text-md font-poppins">
+                No transactions found, try a different filter or add transaction
+              </h1>
+            )}
+          </div>
         </div>
       </div>
 
