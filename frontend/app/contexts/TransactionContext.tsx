@@ -42,7 +42,7 @@ export type Transaction = {
 interface TransactionContextType {
   transactions: Transaction[];
   loading: boolean;
-  fetchTransactions: () => Promise<void>
+  fetchTransactions: () => Promise<void>;
 }
 
 const TransactionContext = createContext<TransactionContextType | undefined>(
@@ -76,10 +76,24 @@ export const TransactionProvider = ({
   }, []);
 
   return (
-    <TransactionContext.Provider value={{ transactions, loading, fetchTransactions }}>
+    <TransactionContext.Provider
+      value={{ transactions, loading, fetchTransactions }}
+    >
       {children}
     </TransactionContext.Provider>
   );
 };
 
-export const useTransactions = () => useContext(TransactionContext);
+export const useTransactions = () => {
+  const context = useContext(TransactionContext);
+
+  // If the hook is used outside of the Provider, throw a helpful error
+  if (context === undefined) {
+    throw new Error(
+      "useTransactions must be used within a TransactionProvider",
+    );
+  }
+
+  // Now TypeScript knows context is definitely NOT undefined
+  return context;
+};

@@ -5,6 +5,16 @@ import type { DashboardInformationProps } from "~/components/ui/DashboardInforma
 import DashboardInformation from "~/components/ui/DashboardInformation";
 import { apiFetch } from "~/utils/api/apiFetch";
 import { formatCurrency } from "~/utils/format/format";
+import { useTransactions, CATEGORIES } from "~/contexts/TransactionContext";
+import {
+  BarChart,
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -24,12 +34,31 @@ export function meta({}: Route.MetaArgs) {
 }
 
 const Dashboard = () => {
+  const { transactions } = useTransactions();
   const [summary, setSummary] = useState({
     total_balance: 0,
     total_income: 0,
     total_expenses: 0,
   });
 
+  // 1. Pre-calculate totals for ALL categories in one single pass
+  const totalsByCategoryId = transactions.reduce<Record<number, number>>(
+    (acc, t) => {
+      const id = t.category_id;
+      acc[id] = (acc[id] || 0) + Number(t.amount);
+      return acc;
+    },
+    {},
+  );
+
+  // 2. Simply look up the pre-calculated values
+  const expenseData = CATEGORIES.filter((c) => c.type === "expense")
+    .map((c) => ({
+      name: c.name,
+      value: totalsByCategoryId[c.id] || 0, // Instant lookup!
+    }))
+    .filter((d) => d.value > 0);
+  console.log(transactions);
   const dashboardColumns: DashboardInformationProps[] = [
     {
       label: "Total Balance",
@@ -77,9 +106,11 @@ const Dashboard = () => {
     fetchSummary();
   }, []);
 
+  const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884d8"];
   return (
     <section className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-6xl mx-auto px-4">
+        {/* Dashboard Columns Information */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {dashboardColumns.map((col) => (
             <DashboardInformation
@@ -92,6 +123,43 @@ const Dashboard = () => {
               iconColor={col.iconColor}
             />
           ))}
+        </div>
+
+        {/* Chart Container */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
+          {/* Pie Chart */}
+          <div className="w-full h-80 bg-white shadow-md rounded-md p-4">
+            <h1 className="font-semibold tracking-tight lg:text-lg">
+              Expenses by Category
+            </h1>
+            <ResponsiveContainer>
+              <PieChart>
+                <Pie
+                  data={expenseData} // Your optimized array
+                  dataKey="value" // What determines slice size
+                  nameKey="name" // What appears in the Legend
+                  cx="50%" // Horizontal center
+                  cy="50%" // Vertical center
+                  outerRadius={80} // Size of the pie
+                  label // Displays category names next to slices
+                >
+                  {/* 2. Map colors to each slice using Cell */}
+                  {expenseData.map((entry, index) => (
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={COLORS[index % COLORS.length]}
+                    />
+                  ))}
+                </Pie>
+                <Tooltip></Tooltip>
+                <Legend className="pb-2"></Legend>
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+          {/* Bar Chart */}
+          <div className="bg-white shadow-md rounded-md p-4">
+            <BarChart />
+          </div>
         </div>
       </div>
     </section>

@@ -46,6 +46,6 @@
 @layer base {
   th,
   td {
-    @apply px-4 py-6 text-left text-xs font-poppins tracking-wide;
+    @apply p-4 text-left text-xs font-poppins tracking-wide;
   }
 }
