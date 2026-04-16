@@ -15,6 +15,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+import RecentTransactions from "~/components/RecentTransactions";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -58,7 +59,7 @@ const Dashboard = () => {
       value: totalsByCategoryId[c.id] || 0, // Instant lookup!
     }))
     .filter((d) => d.value > 0);
-  console.log(transactions);
+  // console.log(transactions);
   const dashboardColumns: DashboardInformationProps[] = [
     {
       label: "Total Balance",
@@ -132,34 +133,47 @@ const Dashboard = () => {
             <h1 className="font-semibold tracking-tight lg:text-lg">
               Expenses by Category
             </h1>
-            <ResponsiveContainer>
-              <PieChart>
-                <Pie
-                  data={expenseData} // Your optimized array
-                  dataKey="value" // What determines slice size
-                  nameKey="name" // What appears in the Legend
-                  cx="50%" // Horizontal center
-                  cy="50%" // Vertical center
-                  outerRadius={80} // Size of the pie
-                  label // Displays category names next to slices
-                >
-                  {/* 2. Map colors to each slice using Cell */}
-                  {expenseData.map((entry, index) => (
-                    <Cell
-                      key={`cell-${index}`}
-                      fill={COLORS[index % COLORS.length]}
-                    />
-                  ))}
-                </Pie>
-                <Tooltip></Tooltip>
-                <Legend className="pb-2"></Legend>
-              </PieChart>
-            </ResponsiveContainer>
+            {transactions.length > 0 ? (
+              <ResponsiveContainer>
+                <PieChart>
+                  <Pie
+                    data={expenseData} // Your optimized array
+                    dataKey="value" // What determines slice size
+                    nameKey="name" // What appears in the Legend
+                    cx="50%" // Horizontal center
+                    cy="50%" // Vertical center
+                    outerRadius={80} // Size of the pie
+                    label // Displays category names next to slices
+                  >
+                    {/* 2. Map colors to each slice using Cell */}
+                    {expenseData.map((entry, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={COLORS[index % COLORS.length]}
+                      />
+                    ))}
+                  </Pie>
+                  <Tooltip></Tooltip>
+                  <Legend className="pb-2"></Legend>
+                </PieChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="flex items-center justify-center h-full">
+                <h1 className="text-xs md:text-sm text-gray-500 text-center">
+                  No expense data available
+                </h1>
+              </div>
+            )}
           </div>
           {/* Bar Chart */}
           <div className="bg-white shadow-md rounded-md p-4">
             <BarChart />
           </div>
+        </div>
+
+        {/* Recent Transactions */}
+        <div className="mt-4">
+          <RecentTransactions />
         </div>
       </div>
     </section>

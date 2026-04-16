@@ -28,7 +28,7 @@ const TableRow = ({ transaction }: TableRowProps) => {
       <td className="">{transaction.description}</td>
 
       {/*Category Name*/}
-      <td className="">{category?.name}</td>
+      <td className="text-gray-800">{category?.name}</td>
 
       {/* Category Type */}
       <td className="">
