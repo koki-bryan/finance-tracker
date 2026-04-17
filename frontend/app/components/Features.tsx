@@ -50,7 +50,7 @@ const data: FeatureCardProps[] = [
 ];
 const Features = () => {
   return (
-    <section className="bg-linear-to-br from-blue-50 to-white min-h-screen p-6">
+    <section className="bg-linear-to-br from-blue-50 to-white p-6 pb-12">
       <div className="py-12 flex flex-col gap-4">
         <h1 className="text-center font-semibold font-poppins text-xl md:text-3xl">
           Powerful Features to Manage Your Money

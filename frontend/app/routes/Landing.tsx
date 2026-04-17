@@ -5,10 +5,11 @@ import LandingSection from "~/components/LandingSection";
 import Nav from "~/components/Nav";
 
 import type { Route } from "./+types/Landing"; // If using generated types
+import WhyUse from "~/components/WhyUse";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "Finance Tracker" },
+    { title: "Fi-Track" },
     {
       name: "description",
       content: "The best tool to track your daily expenses and savings.",
@@ -29,6 +30,7 @@ const Landing = () => {
       <Nav />
       <LandingSection />
       <Features />
+      <WhyUse />
     </>
   );
 };
