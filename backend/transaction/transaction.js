@@ -32,4 +32,16 @@ router.get("/transaction", authMiddleWare, async (req, res) => {
   res.json(result.rows);
 });
 
+router.delete("/transaction/:id", authMiddleWare, async (req, res) => {
+  const { id } = req.params;
+  const userId = req.user.userId;
+
+  const result = await pool.query(
+    "DELETE FROM transactions WHERE id = $1 AND user_id = $2 RETURNING *",
+    [id, userId],
+  );
+
+  res.json(result.rows[0]);
+});
+
 export default router;

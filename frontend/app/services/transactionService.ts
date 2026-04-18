@@ -9,6 +9,10 @@ type dataProps = {
   date: string;
 };
 
+export const getTransactions = async () => {
+  return await apiFetch(`${BASE_URL}/transaction`);
+};
+
 export const createTransaction = async (data: dataProps) => {
   return await apiFetch(`${BASE_URL}/transaction`, {
     method: "POST",
@@ -16,6 +20,8 @@ export const createTransaction = async (data: dataProps) => {
   });
 };
 
-export const getTransactions = async () => {
-  return await apiFetch(`${BASE_URL}/transaction`);
+export const deleteTransaction = async (id: number) => {
+  return await apiFetch(`${BASE_URL}/transaction/${id}`, {
+    method: "DELETE",
+  });
 };

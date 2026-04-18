@@ -1,6 +1,11 @@
 import React from "react";
 import { PenBox, Trash2, TrendingUp, TrendingDown } from "lucide-react";
-import { type Transaction, CATEGORIES } from "~/contexts/TransactionContext";
+import {
+  type Transaction,
+  CATEGORIES,
+  useTransactions,
+} from "~/contexts/TransactionContext";
+import { deleteTransaction } from "~/services/transactionService";
 
 type TableRowProps = {
   transaction: Transaction;
@@ -10,11 +15,17 @@ const INCOME_STYLE = "text-green-700 bg-green-100";
 const EXPENSE_STYLE = "text-red-700 bg-red-100";
 
 const TableRow = ({ transaction }: TableRowProps) => {
+  const { fetchTransactions } = useTransactions();
   const category = CATEGORIES.find((c) => c.id === transaction.category_id);
 
   const isIncome = category?.type === "income";
 
   const formatDate = new Date(transaction.date);
+
+  const handleDelete = async () => {
+    deleteTransaction(transaction.id);
+    fetchTransactions();
+  };
   return (
     <tr className="border-b border-gray-200">
       {/* Date */}
@@ -61,7 +72,10 @@ const TableRow = ({ transaction }: TableRowProps) => {
           <button className="hover:bg-indigo-100 cursor-pointer p-2 rounded-lg">
             <PenBox className="w-4 h-4 cursor-pointer text-indigo-600" />
           </button>
-          <button className="hover:bg-red-100 cursor-pointer p-2 rounded-lg">
+          <button
+            className="hover:bg-red-100 cursor-pointer p-2 rounded-lg"
+            onClick={handleDelete}
+          >
             <Trash2 className="w-4 h-4 cursor-pointer text-red-600" />
           </button>
         </div>
