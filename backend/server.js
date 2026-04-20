@@ -17,11 +17,11 @@ app.use(cors());
 const { Pool } = pkg;
 
 export const pool = new Pool({
-  user: "postgres",
-  host: "localhost",
-  database: "finance_tracker",
-  password: "101906",
-  port: 5432,
+  user: process.env.DB_USER || "postgres",
+  host: process.env.DB_HOST || "localhost",
+  database: process.env.DB_NAME || "finance_tracker",
+  password: process.env.DB_PASSWORD || "101906",
+  port: process.env.DB_PORT || 5432,
 });
 
 app.listen(port, () => {
