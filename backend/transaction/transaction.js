@@ -22,6 +22,7 @@ router.post("/transaction", authMiddleWare, async (req, res) => {
   res.json(result.rows[0]);
 });
 
+//used as a transaction provider, used in recent transactions and PIE CHART(filtered in frontend)
 router.get("/transaction", authMiddleWare, async (req, res) => {
   const userId = req.user.userId;
 
@@ -30,6 +31,25 @@ router.get("/transaction", authMiddleWare, async (req, res) => {
     [userId],
   );
   res.json(result.rows);
+});
+
+//income vs expense summary last 6 months
+router.get("/transaction/summary", authMiddleWare, async (req, res) => {
+  const userId = req.user.userId;
+  try {
+    const result = await pool.query(
+      "SELECT DATE_TRUNC('month', t.date), c.type, SUM(t.amount) FROM transactions t JOIN categories c ON c.id=t.category_id WHERE t.user_id=$1 AND t.date >= CURRENT_DATE - INTERVAL '6 months' GROUP BY DATE_TRUNC('month', t.date), c.type ORDER BY DATE_TRUNC('month', t.date) ASC, c.type ",
+      [userId],
+    );
+
+    if (result.rows.length === 0) {
+      res.status(404).json({ error: "Not Found" });
+    }
+
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).send("Server Error");
+  }
 });
 
 router.delete("/transaction/:id", authMiddleWare, async (req, res) => {

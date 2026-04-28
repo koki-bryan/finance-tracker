@@ -4,18 +4,20 @@ import { Wallet, TrendingUp, TrendingDown } from "lucide-react";
 import type { DashboardInformationProps } from "~/components/ui/DashboardInformation";
 import DashboardInformation from "~/components/ui/DashboardInformation";
 import { apiFetch } from "~/utils/api/apiFetch";
-import { formatCurrency } from "~/utils/format/format";
 import { useTransactions, CATEGORIES } from "~/contexts/TransactionContext";
 import {
   BarChart,
   PieChart,
   Pie,
-  Cell,
   Tooltip,
   Legend,
   ResponsiveContainer,
 } from "recharts";
 import RecentTransactions from "~/components/RecentTransactions";
+import {
+  ExpenseTooltip,
+  renderActiveShape,
+} from "~/components/ui/PieChartEdits";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -34,6 +36,31 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
+// ─── Color palette keyed by category name ───────────────────────────────────
+const CATEGORY_COLORS: Record<string, string> = {
+  Housing: "#5DCAA5",
+  Food: "#7F77DD",
+  Transport: "#EF9F27",
+  Healthcare: "#D85A30",
+  Education: "#378ADD",
+  Shopping: "#D4537E",
+  Utilities: "#639922",
+  Entertainment: "#E24B4A",
+  Other: "#888780",
+};
+const FALLBACK_COLORS = [
+  "#5DCAA5",
+  "#7F77DD",
+  "#EF9F27",
+  "#D85A30",
+  "#378ADD",
+  "#D4537E",
+  "#639922",
+  "#E24B4A",
+  "#888780",
+];
+
+// ─── Dashboard ───────────────────────────────────────────────────────────────
 const Dashboard = () => {
   const { transactions } = useTransactions();
   const [summary, setSummary] = useState({
@@ -41,8 +68,8 @@ const Dashboard = () => {
     total_income: 0,
     total_expenses: 0,
   });
+  const [activeIdx, setActiveIdx] = useState<number | null>(null);
 
-  // 1. Pre-calculate totals for ALL categories in one single pass
   const totalsByCategoryId = transactions.reduce<Record<number, number>>(
     (acc, t) => {
       const id = t.category_id;
@@ -52,14 +79,18 @@ const Dashboard = () => {
     {},
   );
 
-  // 2. Simply look up the pre-calculated values
+  // ✅ Cell replacement: `fill` embedded directly in data array
   const expenseData = CATEGORIES.filter((c) => c.type === "expense")
-    .map((c) => ({
+    .map((c, i) => ({
       name: c.name,
-      value: totalsByCategoryId[c.id] || 0, // Instant lookup!
+      value: totalsByCategoryId[c.id] || 0,
+      fill:
+        CATEGORY_COLORS[c.name] ?? FALLBACK_COLORS[i % FALLBACK_COLORS.length],
     }))
     .filter((d) => d.value > 0);
-  // console.log(transactions);
+
+  const expenseTotal = expenseData.reduce((sum, d) => sum + d.value, 0);
+
   const dashboardColumns: DashboardInformationProps[] = [
     {
       label: "Total Balance",
@@ -93,25 +124,21 @@ const Dashboard = () => {
         const response = await apiFetch(
           "http://localhost:5000/api/v1/dashboard",
         );
-
         if (!response || !response.ok)
           throw new Error("Failed to fetch summary");
-
         const data = await response.json();
         setSummary(data);
       } catch (err) {
         console.error("Fetch error:", err);
       }
     };
-
     fetchSummary();
   }, []);
 
-  const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884d8"];
   return (
     <section className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-6xl mx-auto px-4">
-        {/* Dashboard Columns Information */}
+        {/* Dashboard Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {dashboardColumns.map((col) => (
             <DashboardInformation
@@ -126,48 +153,76 @@ const Dashboard = () => {
           ))}
         </div>
 
-        {/* Chart Container */}
+        {/* Charts */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
           {/* Pie Chart */}
           <div className="w-full h-80 bg-white shadow-md rounded-md p-4">
-            <h1 className="font-semibold tracking-tight lg:text-lg">
+            <h2 className="font-semibold tracking-tight lg:text-lg mb-1">
               Expenses by Category
-            </h1>
-            {transactions.length > 0 ? (
-              <ResponsiveContainer>
+            </h2>
+            {expenseData.length > 0 ? (
+              <ResponsiveContainer width="100%" height={260}>
                 <PieChart>
                   <Pie
-                    data={expenseData} // Your optimized array
-                    dataKey="value" // What determines slice size
-                    nameKey="name" // What appears in the Legend
-                    cx="50%" // Horizontal center
-                    cy="50%" // Vertical center
-                    outerRadius={80} // Size of the pie
-                    label // Displays category names next to slices
-                  >
-                    {/* 2. Map colors to each slice using Cell */}
-                    {expenseData.map((entry, index) => (
-                      <Cell
-                        key={`cell-${index}`}
-                        fill={COLORS[index % COLORS.length]}
-                      />
-                    ))}
-                  </Pie>
-                  <Tooltip></Tooltip>
-                  <Legend className="pb-2"></Legend>
+                    data={expenseData}
+                    dataKey="value"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={55}
+                    outerRadius={85}
+                    paddingAngle={2}
+                    stroke="none"
+                    activeIndex={activeIdx ?? undefined}
+                    activeShape={renderActiveShape}
+                    onMouseEnter={(_, i) => setActiveIdx(i)}
+                    onMouseLeave={() => setActiveIdx(null)}
+                  />
+                  {/* ✅ Idle center label — rendered as a direct SVG child of PieChart */}
+                  {activeIdx === null && (
+                    <text
+                      x="50%"
+                      y="44%"
+                      textAnchor="middle"
+                      dominantBaseline="central"
+                      style={{ fontSize: 11, fill: "#9ca3af" }}
+                    >
+                      Total Spent
+                    </text>
+                  )}
+                  {activeIdx === null && (
+                    <text
+                      x="50%"
+                      y="56%"
+                      textAnchor="middle"
+                      dominantBaseline="central"
+                      style={{ fontSize: 16, fontWeight: 600, fill: "#111827" }}
+                    >
+                      ₱{expenseTotal.toLocaleString()}
+                    </text>
+                  )}
+                  <Tooltip content={<ExpenseTooltip total={expenseTotal} />} />
+                  <Legend
+                    iconType="circle"
+                    iconSize={8}
+                    formatter={(value) => (
+                      <span className="text-xs text-gray-500">{value}</span>
+                    )}
+                  />
                 </PieChart>
               </ResponsiveContainer>
             ) : (
               <div className="flex items-center justify-center h-full">
-                <h1 className="text-xs md:text-sm text-gray-500 text-center">
+                <p className="text-xs md:text-sm text-gray-500 text-center">
                   No expense data available
-                </h1>
+                </p>
               </div>
             )}
           </div>
+
           {/* Bar Chart */}
           <div className="bg-white shadow-md rounded-md p-4">
-            <BarChart />
+            <BarChart></BarChart>
           </div>
         </div>
 
@@ -179,4 +234,5 @@ const Dashboard = () => {
     </section>
   );
 };
+
 export default Dashboard;
