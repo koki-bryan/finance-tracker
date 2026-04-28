@@ -39,6 +39,11 @@ export type Transaction = {
   user_id: number;
 };
 
+export type IESummary = {
+  date_trunc: string;
+  type: "income" | "expense";
+  sum: string;
+};
 interface TransactionContextType {
   transactions: Transaction[];
   loading: boolean;

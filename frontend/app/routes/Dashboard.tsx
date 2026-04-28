@@ -4,7 +4,11 @@ import { Wallet, TrendingUp, TrendingDown } from "lucide-react";
 import type { DashboardInformationProps } from "~/components/ui/DashboardInformation";
 import DashboardInformation from "~/components/ui/DashboardInformation";
 import { apiFetch } from "~/utils/api/apiFetch";
-import { useTransactions, CATEGORIES } from "~/contexts/TransactionContext";
+import {
+  useTransactions,
+  CATEGORIES,
+  type IESummary,
+} from "~/contexts/TransactionContext";
 import {
   BarChart,
   PieChart,
@@ -18,6 +22,7 @@ import {
   ExpenseTooltip,
   renderActiveShape,
 } from "~/components/ui/PieChartEdits";
+import IEBarChart from "~/components/IEBarChart";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -68,6 +73,7 @@ const Dashboard = () => {
     total_income: 0,
     total_expenses: 0,
   });
+
   const [activeIdx, setActiveIdx] = useState<number | null>(null);
 
   const totalsByCategoryId = transactions.reduce<Record<number, number>>(
@@ -79,7 +85,6 @@ const Dashboard = () => {
     {},
   );
 
-  // ✅ Cell replacement: `fill` embedded directly in data array
   const expenseData = CATEGORIES.filter((c) => c.type === "expense")
     .map((c, i) => ({
       name: c.name,
@@ -135,6 +140,27 @@ const Dashboard = () => {
     fetchSummary();
   }, []);
 
+  //Data fetching for the INCOME VS EXPENSE LAST 6 MONTHS
+  const [IESummary, setIESummary] = useState<IESummary[]>([]);
+
+  useEffect(() => {
+    const fetchSummary = async () => {
+      try {
+        const result = await apiFetch(
+          "http://localhost:5000/api/v1/transaction/summary",
+        );
+
+        if (!result || !result.ok) throw new Error("Failed to fetch summary");
+        const data = await result.json();
+        setIESummary(data);
+      } catch (err) {
+        console.error("Fetching error:", err);
+      }
+    };
+
+    fetchSummary();
+  }, []);
+
   return (
     <section className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-6xl mx-auto px-4">
@@ -161,7 +187,7 @@ const Dashboard = () => {
               Expenses by Category
             </h2>
             {expenseData.length > 0 ? (
-              <ResponsiveContainer width="100%" height={260}>
+              <ResponsiveContainer width={"100%"} height={260}>
                 <PieChart>
                   <Pie
                     data={expenseData}
@@ -222,7 +248,9 @@ const Dashboard = () => {
 
           {/* Bar Chart */}
           <div className="bg-white shadow-md rounded-md p-4">
-            <BarChart></BarChart>
+            <ResponsiveContainer width={"100%"} height={260}>
+              <IEBarChart data={IESummary} />
+            </ResponsiveContainer>
           </div>
         </div>
 
