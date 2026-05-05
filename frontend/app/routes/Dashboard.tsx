@@ -195,7 +195,7 @@ const Dashboard = () => {
                     nameKey="name"
                     cx="50%"
                     cy="50%"
-                    innerRadius={55}
+                    innerRadius={60}
                     outerRadius={85}
                     paddingAngle={2}
                     stroke="none"
@@ -248,9 +248,17 @@ const Dashboard = () => {
 
           {/* Bar Chart */}
           <div className="bg-white shadow-md rounded-md p-4">
-            <ResponsiveContainer width={"100%"} height={260}>
-              <IEBarChart data={IESummary} />
-            </ResponsiveContainer>
+            {transactions.length > 0 ? (
+              <ResponsiveContainer width={"100%"} height={260}>
+                <IEBarChart data={IESummary} />
+              </ResponsiveContainer>
+            ) : (
+              <div className="flex items-center justify-center h-full">
+                <p className="text-xs md:text-sm text-gray-500 text-center">
+                  No income vs. expense data available
+                </p>
+              </div>
+            )}
           </div>
         </div>
 

@@ -21,11 +21,13 @@ const TransactionModal = ({ onClose }: TransactionModalProps) => {
   >("expense"); // FOR STYLES ONLY
 
   const { fetchTransactions } = useTransactions();
-  const [type, setType] = useState("all");
+  const [type, setType] = useState("expense");
   const [category, setCategory] = useState("");
   const [amount, setAmount] = useState("");
   const [description, setDescription] = useState("");
-  const [date, setDate] = useState("");
+  const [date, setDate] = useState(
+    () => new Date().toISOString().split("T")[0],
+  );
 
   const filteredCategories =
     type === "all" ? CATEGORIES : CATEGORIES.filter((c) => c.type === type);
@@ -176,7 +178,7 @@ const TransactionModal = ({ onClose }: TransactionModalProps) => {
               Date
             </label>
             <input
-              type="datetime-local"
+              type="date"
               name="date"
               id="date"
               className="border p-2 border-gray-400 rounded-lg mt-2"
