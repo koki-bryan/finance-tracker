@@ -12,7 +12,8 @@ export function meta({}: Route.MetaArgs) {
     { property: "og:title", content: "Finance Tracker" },
     {
       property: "og:description",
-      content: "Take control of your money today.",
+      content:
+        "Take control of your money today. Add, Delete or Update your transactions here.",
     },
     {
       name: "keywords",
@@ -57,6 +58,7 @@ const Transactions = () => {
 
           {/* Container */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* TYPE CONTAINER */}
             <div className="">
               <div className="flex flex-col gap-2 px-6">
                 <h2 className="font-poppins tracking-wider text-gray-500">
@@ -67,6 +69,7 @@ const Transactions = () => {
                   onChange={(e) => {
                     setType(e.target.value as "all" | "income" | "expense");
                     setCategory("");
+                    console.log(`${type} ${category}`);
                   }}
                   className="border p-2 rounded-lg border-gray-300 text-sm px-4 font-poppins"
                 >
@@ -76,6 +79,8 @@ const Transactions = () => {
                 </select>
               </div>
             </div>
+
+            {/* CATEGORIES CONTAINER */}
             <div className="">
               <div className="flex flex-col gap-2 px-6 pb-6">
                 <h2 className="font-poppins tracking-wider text-gray-500">
@@ -88,7 +93,7 @@ const Transactions = () => {
                   }}
                   className="border p-2 rounded-lg border-gray-300 text-sm px-4 font-poppins"
                 >
-                  <option value="">All categories</option>
+                  <option value="all">All categories</option>
                   {filteredCategories.map((cat) => (
                     <option key={cat.id} value={cat.id}>
                       {cat.name}
