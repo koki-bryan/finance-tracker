@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import type { Route } from "./+types/Transactions";
-import { Plus, Filter, type LucideIcon } from "lucide-react";
+import { Plus, Filter, ArrowUpDown, type LucideIcon } from "lucide-react";
 import TransactionModal from "~/components/TransactionModal";
-import { CATEGORIES, useTransactions } from "~/contexts/TransactionContext";
+import { CATEGORIES, useTransactions, type Transaction } from "~/contexts/TransactionContext";
 import TableRow from "~/components/ui/TableRow";
+import EmptyState from "~/components/ui/EmptyState";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -27,6 +28,18 @@ const Transactions = () => {
   const [type, setType] = useState<"all" | "expense" | "income">("all");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [category, setCategory] = useState("");
+  const [sortConfig, setSortConfig] = useState<{
+    key: string;
+    direction: "asc" | "desc";
+  } | null>(null);
+
+  const requestSort = (key: string) => {
+    let direction: "asc" | "desc" = "asc";
+    if (sortConfig && sortConfig.key === key && sortConfig.direction === "asc") {
+      direction = "desc";
+    }
+    setSortConfig({ key, direction });
+  };
 
   const filteredCategories =
     type === "all"
@@ -44,6 +57,52 @@ const Transactions = () => {
     
     return true;
   });
+
+  const sortedTransactions = React.useMemo(() => {
+    let sortableItems = [...filteredTransactions];
+    if (sortConfig !== null) {
+      sortableItems.sort((a, b) => {
+        let aValue: any = a[sortConfig.key as keyof Transaction];
+        let bValue: any = b[sortConfig.key as keyof Transaction];
+        
+        // Handle special cases like category name or amount parsing
+        if (sortConfig.key === "amount") {
+          aValue = parseFloat(a.amount);
+          bValue = parseFloat(b.amount);
+        } else if (sortConfig.key === "date") {
+          aValue = new Date(a.date).getTime();
+          bValue = new Date(b.date).getTime();
+        } else if (sortConfig.key === "category") {
+          aValue = CATEGORIES.find(c => c.id === a.category_id)?.name || "";
+          bValue = CATEGORIES.find(c => c.id === b.category_id)?.name || "";
+        } else if (sortConfig.key === "type") {
+          aValue = CATEGORIES.find(c => c.id === a.category_id)?.type || "";
+          bValue = CATEGORIES.find(c => c.id === b.category_id)?.type || "";
+        }
+
+        if (aValue < bValue) {
+          return sortConfig.direction === "asc" ? -1 : 1;
+        }
+        if (aValue > bValue) {
+          return sortConfig.direction === "asc" ? 1 : -1;
+        }
+        return 0;
+      });
+    }
+    return sortableItems;
+  }, [filteredTransactions, sortConfig]);
+
+  const SortableHeader = ({ label, sortKey }: { label: string; sortKey: string }) => (
+    <th 
+      className="text-gray-500 cursor-pointer hover:text-gray-700 transition-colors py-3 text-left font-medium text-sm"
+      onClick={() => requestSort(sortKey)}
+    >
+      <div className="flex items-center gap-1">
+        {label}
+        <ArrowUpDown className="w-3 h-3 opacity-50" />
+      </div>
+    </th>
+  );
 
   return (
     <section className="min-h-screen bg-gray-50 py-8">
@@ -120,28 +179,26 @@ const Transactions = () => {
         {/* Transactions List Card */}
         <div className="bg-white rounded-lg shadow overflow-hidden">
           <div className="overflow-x-auto">
-            {filteredTransactions.length > 0 ? (
-              <table className="w-full">
+            {sortedTransactions.length > 0 ? (
+              <table className="w-full text-sm">
                 <thead className="bg-gray-50 border-b border-gray-200">
-                  <tr className="">
-                    <th className="text-gray-500">DATE</th>
-                    <th className="text-gray-500">DESCRIPTION</th>
-                    <th className="text-gray-500">CATEGORY</th>
-                    <th className="text-gray-500">TYPE</th>
-                    <th className="text-gray-500">AMOUNT</th>
-                    <th className="text-gray-500">ACTIONS</th>
+                  <tr>
+                    <SortableHeader label="DATE" sortKey="date" />
+                    <SortableHeader label="DESCRIPTION" sortKey="description" />
+                    <SortableHeader label="CATEGORY" sortKey="category" />
+                    <SortableHeader label="TYPE" sortKey="type" />
+                    <SortableHeader label="AMOUNT" sortKey="amount" />
+                    <th className="text-gray-500 py-3 text-left font-medium text-sm">ACTIONS</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredTransactions.map((t) => (
+                  {sortedTransactions.map((t) => (
                     <TableRow key={t.id} transaction={t} />
                   ))}
                 </tbody>
               </table>
             ) : (
-              <h1 className="p-6 text-md font-poppins">
-                No transactions found, try a different filter or add transaction
-              </h1>
+              <EmptyState />
             )}
           </div>
         </div>

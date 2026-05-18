@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import toast from "react-hot-toast";
 import { PenBox, Trash2, TrendingUp, TrendingDown } from "lucide-react";
 import {
   type Transaction,
@@ -27,8 +28,13 @@ const TableRow = ({ transaction }: TableRowProps) => {
   const formatDate = new Date(transaction.date);
 
   const handleDelete = async () => {
-    deleteTransaction(transaction.id);
-    fetchTransactions();
+    try {
+      await deleteTransaction(transaction.id);
+      await fetchTransactions();
+      toast.success("Transaction deleted successfully");
+    } catch (error) {
+      toast.error("Failed to delete transaction");
+    }
   };
   return (
     <>

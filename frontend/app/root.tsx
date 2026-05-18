@@ -24,6 +24,8 @@ export const links: Route.LinksFunction = () => [
   },
 ];
 
+import { Toaster } from "react-hot-toast";
+
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="scroll-smooth">
@@ -34,6 +36,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
+        <Toaster position="bottom-right" />
         {children}
         <ScrollRestoration />
         <Scripts />

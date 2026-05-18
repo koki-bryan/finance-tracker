@@ -43,7 +43,7 @@ router.get("/transaction/summary", authMiddleWare, async (req, res) => {
     );
 
     if (result.rows.length === 0) {
-      res.status(404).json({ error: "Not Found" });
+      return res.status(404).json({ error: "Not Found" });
     }
 
     res.json(result.rows);

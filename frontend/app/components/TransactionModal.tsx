@@ -1,5 +1,7 @@
 import { X } from "lucide-react";
 import { useState } from "react";
+import toast from "react-hot-toast";
+import ClientPortal from "~/components/ui/ClientPortal";
 import { CATEGORIES, useTransactions } from "~/contexts/TransactionContext";
 import {
   createTransaction,
@@ -50,7 +52,7 @@ const TransactionModal = ({ onClose }: TransactionModalProps) => {
       !description.trim() ||
       !date
     ) {
-      console.log("Missing or invalid fields");
+      toast.error("Missing or invalid fields");
       return;
     }
     const modifiedDate = new Date(date).toISOString().split("T")[0];
@@ -65,25 +67,31 @@ const TransactionModal = ({ onClose }: TransactionModalProps) => {
 
       const res = await createTransaction(payload);
 
-      if (!res) return;
-      await fetchTransactions();
-
-      const data = await res.json();
-      if (!res.ok) {
-        console.error(data.error);
+      if (!res) {
+        toast.error("Network error");
         return;
       }
 
+      const data = await res.json();
+      if (!res.ok) {
+        toast.error(data.error || "Failed to create transaction");
+        return;
+      }
+      
+      await fetchTransactions();
+      toast.success("Transaction added successfully!");
       onClose();
     } catch (err) {
       console.error(err);
+      toast.error("An unexpected error occurred");
     }
   };
   return (
-    <div
-      className="fixed inset-0 bg-black/20 flex items-center justify-center z-50 p-4"
-      onClick={onClose}
-    >
+    <ClientPortal>
+      <div
+        className="fixed inset-0 bg-black/20 flex items-center justify-center z-50 p-4"
+        onClick={onClose}
+      >
       <form
         className="bg-white max-w-md w-full rounded-lg"
         onClick={(e) => e.stopPropagation()}
@@ -206,6 +214,7 @@ const TransactionModal = ({ onClose }: TransactionModalProps) => {
         </div>
       </form>
     </div>
+    </ClientPortal>
   );
 };
 

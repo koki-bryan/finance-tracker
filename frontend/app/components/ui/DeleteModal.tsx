@@ -1,5 +1,6 @@
 import React from "react";
 import { Trash2, X } from "lucide-react";
+import ClientPortal from "~/components/ui/ClientPortal";
 
 type DeleteModalProps = {
   onConfirm: () => void;
@@ -13,10 +14,11 @@ export const DeleteModal = ({
   description,
 }: DeleteModalProps) => {
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
-      onClick={onClose}
-    >
+    <ClientPortal>
+      <div
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
+        onClick={onClose}
+      >
       <div
         className="bg-white rounded-xl shadow-lg p-6 w-full max-w-sm mx-4 flex flex-col gap-4"
         onClick={(e) => e.stopPropagation()}
@@ -59,5 +61,6 @@ export const DeleteModal = ({
         </div>
       </div>
     </div>
+    </ClientPortal>
   );
 };

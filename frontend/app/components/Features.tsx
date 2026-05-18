@@ -1,5 +1,6 @@
 import React from "react";
 import FeatureCard, { type FeatureCardProps } from "./ui/FeatureCard";
+import { motion } from "framer-motion";
 import {
   Wallet,
   TrendingUp,
@@ -48,27 +49,58 @@ const data: FeatureCardProps[] = [
     text: "See your current balance update instantly. Always know your financial standing in real-time.",
   },
 ];
+
 const Features = () => {
   return (
     <section className="bg-linear-to-br from-blue-50 to-white p-6 pb-12">
       <div className="py-12 flex flex-col gap-4">
-        <h1 className="text-center font-semibold font-poppins text-xl md:text-3xl">
+        <motion.h1
+          className="text-center font-semibold font-poppins text-xl md:text-3xl"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{
+            duration: 1.5,
+            ease: [0.25, 0.1, 0.25, 1],
+          }}
+        >
           Powerful Features to Manage Your Money
-        </h1>
-        <p className="text-center text-gray-600 md:text-lg max-w-2xl mx-auto font-poppins">
+        </motion.h1>
+        <motion.p
+          className="text-center text-gray-600 md:text-lg max-w-2xl mx-auto font-poppins"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{
+            duration: 1.5,
+            delay: 0.2,
+            ease: [0.25, 0.1, 0.25, 1],
+          }}
+        >
           Everything you need to track, analyze, and improve your financial
           habits in one simple platform.
-        </p>
+        </motion.p>
       </div>
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8 max-w-6xl mx-auto">
-        {data.map((feature) => (
-          <FeatureCard
+        {data.map((feature, i) => (
+          <motion.div
             key={feature.title}
-            color={feature.color}
-            icon={feature.icon}
-            title={feature.title}
-            text={feature.text}
-          />
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{
+              duration: 1.6,
+              delay: i * 0.15,
+              ease: [0.25, 0.1, 0.25, 1],
+            }}
+          >
+            <FeatureCard
+              color={feature.color}
+              icon={feature.icon}
+              title={feature.title}
+              text={feature.text}
+            />
+          </motion.div>
         ))}
       </div>
     </section>

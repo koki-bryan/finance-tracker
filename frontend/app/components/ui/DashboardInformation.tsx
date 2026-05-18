@@ -19,7 +19,7 @@ const DashboardInformation = ({
   iconColor,
 }: DashboardInformationProps) => {
   return (
-    <div className="bg-white shadow-md rounded-md p-4 flex items-center justify-between">
+    <div className="bg-white shadow-md rounded-md p-4 flex items-center justify-between transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer">
       <div className="flex flex-col gap-2">
         <p className="text-xs md:text-sm text-gray-500">{label}</p>
         <h1 className={`${labelValueColor} text-lg md:text-xl`}>

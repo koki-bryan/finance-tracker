@@ -3,6 +3,7 @@ import type { Route } from "./+types/Dashboard";
 import { Wallet, TrendingUp, TrendingDown } from "lucide-react";
 import type { DashboardInformationProps } from "~/components/ui/DashboardInformation";
 import DashboardInformation from "~/components/ui/DashboardInformation";
+import { motion } from "framer-motion";
 import { apiFetch } from "~/utils/api/apiFetch";
 import {
   useTransactions,
@@ -166,23 +167,34 @@ const Dashboard = () => {
       <div className="max-w-6xl mx-auto px-4">
         {/* Dashboard Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {dashboardColumns.map((col) => (
-            <DashboardInformation
+          {dashboardColumns.map((col, i) => (
+            <motion.div
               key={col.label}
-              label={col.label}
-              labelValue={col.labelValue}
-              labelValueColor={col.labelValueColor}
-              icon={col.icon}
-              iconBackground={col.iconBackground}
-              iconColor={col.iconColor}
-            />
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: i * 0.1 }}
+            >
+              <DashboardInformation
+                label={col.label}
+                labelValue={col.labelValue}
+                labelValueColor={col.labelValueColor}
+                icon={col.icon}
+                iconBackground={col.iconBackground}
+                iconColor={col.iconColor}
+              />
+            </motion.div>
           ))}
         </div>
 
         {/* Charts */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
           {/* Pie Chart */}
-          <div className="w-full h-80 bg-white shadow-md rounded-md p-4">
+          <motion.div 
+            className="w-full h-80 bg-white shadow-md rounded-md p-4"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+          >
             <h2 className="font-semibold tracking-tight lg:text-lg mb-1">
               Expenses by Category
             </h2>
@@ -244,10 +256,15 @@ const Dashboard = () => {
                 </p>
               </div>
             )}
-          </div>
+          </motion.div>
 
           {/* Bar Chart */}
-          <div className="bg-white shadow-md rounded-md p-4">
+          <motion.div 
+            className="bg-white shadow-md rounded-md p-4"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+          >
             {transactions.length > 0 ? (
               <ResponsiveContainer width={"100%"} height={260}>
                 <IEBarChart data={IESummary} />
@@ -259,7 +276,7 @@ const Dashboard = () => {
                 </p>
               </div>
             )}
-          </div>
+          </motion.div>
         </div>
 
         {/* Recent Transactions */}
