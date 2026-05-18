@@ -32,6 +32,19 @@ const Transactions = () => {
     type === "all"
       ? CATEGORIES
       : CATEGORIES.filter((category) => category.type === type);
+  const filteredTransactions = transactions.filter((t) => {
+    const cat = CATEGORIES.find((c) => c.id === t.category_id);
+    if (!cat) return false;
+    
+    // Check type filter
+    if (type !== "all" && cat.type !== type) return false;
+    
+    // Check category filter
+    if (category && category !== "all" && t.category_id.toString() !== category) return false;
+    
+    return true;
+  });
+
   return (
     <section className="min-h-screen bg-gray-50 py-8">
       {/* Container */}
@@ -68,8 +81,7 @@ const Transactions = () => {
                   value={type}
                   onChange={(e) => {
                     setType(e.target.value as "all" | "income" | "expense");
-                    setCategory("");
-                    console.log(`${type} ${category}`);
+                    setCategory("all"); // Reset category to "all" when type changes
                   }}
                   className="border p-2 rounded-lg border-gray-300 text-sm px-4 font-poppins"
                 >
@@ -108,7 +120,7 @@ const Transactions = () => {
         {/* Transactions List Card */}
         <div className="bg-white rounded-lg shadow overflow-hidden">
           <div className="overflow-x-auto">
-            {transactions.length > 0 ? (
+            {filteredTransactions.length > 0 ? (
               <table className="w-full">
                 <thead className="bg-gray-50 border-b border-gray-200">
                   <tr className="">
@@ -121,7 +133,7 @@ const Transactions = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {transactions.map((t) => (
+                  {filteredTransactions.map((t) => (
                     <TableRow key={t.id} transaction={t} />
                   ))}
                 </tbody>

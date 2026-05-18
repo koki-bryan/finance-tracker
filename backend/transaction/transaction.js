@@ -64,4 +64,29 @@ router.delete("/transaction/:id", authMiddleWare, async (req, res) => {
   res.json(result.rows[0]);
 });
 
+router.put("/transaction/:id", authMiddleWare, async (req, res) => {
+  const { id } = req.params;
+  const userId = req.user.userId;
+  const { category, amount, description, date } = req.body;
+
+  if (!category || !amount || !description || !date)
+    return res.status(400).json({ error: "Missing fields" });
+
+  try {
+    const result = await pool.query(
+      "UPDATE transactions SET category_id = $1, amount = $2, description = $3, date = $4 WHERE id = $5 AND user_id = $6 RETURNING *",
+      [category, amount, description, date, id, userId],
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Transaction not found" });
+    }
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error("Error updating transaction:", error);
+    res.status(500).json({ error: "Server Error" });
+  }
+});
+
 export default router;

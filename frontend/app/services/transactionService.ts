@@ -25,3 +25,10 @@ export const deleteTransaction = async (id: number) => {
     method: "DELETE",
   });
 };
+
+export const updateTransaction = async (id: number, data: dataProps) => {
+  return await apiFetch(`${BASE_URL}/transaction/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(data),
+  });
+};

@@ -7,6 +7,7 @@ import {
 } from "~/contexts/TransactionContext";
 import { deleteTransaction } from "~/services/transactionService";
 import { DeleteModal } from "./DeleteModal";
+import UpdateTransactionModal from "../UpdateTransactionModal";
 
 type TableRowProps = {
   transaction: Transaction;
@@ -19,6 +20,7 @@ const TableRow = ({ transaction }: TableRowProps) => {
   const { fetchTransactions } = useTransactions();
   const category = CATEGORIES.find((c) => c.id === transaction.category_id);
   const [showDeleteModal, setShowDeleteModal] = useState(false); // 👈 add this
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
 
   const isIncome = category?.type === "income";
 
@@ -72,7 +74,13 @@ const TableRow = ({ transaction }: TableRowProps) => {
         </td>
         <td className="">
           <div className="flex items-center gap-2">
-            <button className="hover:bg-indigo-100 cursor-pointer p-2 rounded-lg">
+            <button 
+              className="hover:bg-indigo-100 cursor-pointer p-2 rounded-lg"
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowUpdateModal(true);
+              }}
+            >
               <PenBox className="w-4 h-4 cursor-pointer text-indigo-600" />
             </button>
             <button
@@ -92,6 +100,12 @@ const TableRow = ({ transaction }: TableRowProps) => {
           description={transaction.description}
           onConfirm={handleDelete}
           onClose={() => setShowDeleteModal(false)}
+        />
+      )}
+      {showUpdateModal && (
+        <UpdateTransactionModal
+          transaction={transaction}
+          onClose={() => setShowUpdateModal(false)}
         />
       )}
     </>
