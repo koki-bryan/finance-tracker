@@ -10,6 +10,7 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function SignUp() {
+  const API_URL = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
   const [formName, setFormName] = useState("");
   const [formEmail, setFormEmail] = useState("");
@@ -19,7 +20,7 @@ export default function SignUp() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const res = await fetch("http://localhost:5000/api/v1/signup", {
+    const res = await fetch(`${API_URL}/signup`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

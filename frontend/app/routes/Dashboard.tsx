@@ -68,6 +68,7 @@ const FALLBACK_COLORS = [
 
 // ─── Dashboard ───────────────────────────────────────────────────────────────
 const Dashboard = () => {
+  const API_URL = import.meta.env.VITE_API_URL;
   const { transactions } = useTransactions();
   const [summary, setSummary] = useState({
     total_balance: 0,
@@ -127,9 +128,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchSummary = async () => {
       try {
-        const response = await apiFetch(
-          "http://localhost:5000/api/v1/dashboard",
-        );
+        const response = await apiFetch(`${API_URL}/dashboard`);
         if (!response || !response.ok)
           throw new Error("Failed to fetch summary");
         const data = await response.json();
@@ -147,9 +146,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchSummary = async () => {
       try {
-        const result = await apiFetch(
-          "http://localhost:5000/api/v1/transaction/summary",
-        );
+        const result = await apiFetch(`${API_URL}/transaction/summary`);
 
         if (!result || !result.ok) throw new Error("Failed to fetch summary");
         const data = await result.json();
@@ -189,7 +186,7 @@ const Dashboard = () => {
         {/* Charts */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
           {/* Pie Chart */}
-          <motion.div 
+          <motion.div
             className="w-full h-80 bg-white shadow-md rounded-md p-4"
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -259,7 +256,7 @@ const Dashboard = () => {
           </motion.div>
 
           {/* Bar Chart */}
-          <motion.div 
+          <motion.div
             className="bg-white shadow-md rounded-md p-4"
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}

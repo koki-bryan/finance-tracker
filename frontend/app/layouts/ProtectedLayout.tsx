@@ -4,6 +4,7 @@ import { Outlet, Navigate } from "react-router";
 const ProtectedLayout = () => {
   const [token, setToken] = useState<string | null>(null);
   const [checkedAuth, setCheckedAuth] = useState(false);
+  const API_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -15,7 +16,7 @@ const ProtectedLayout = () => {
       }
 
       try {
-        const res = await fetch("http://localhost:5000/api/v1/me", {
+        const res = await fetch(`${API_URL}/me`, {
           headers: {
             Authorization: `Bearer ${storedToken}`,
           },

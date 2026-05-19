@@ -10,6 +10,7 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function LogIn() {
+  const API_URL = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
   const [formEmail, setFormEmail] = useState("");
   const [formPassword, setFormPassword] = useState("");
@@ -20,7 +21,7 @@ export default function LogIn() {
     const email = formEmail;
     const password = formPassword;
 
-    const res = await fetch("http://localhost:5000/api/v1/login", {
+    const res = await fetch(`${API_URL}/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
